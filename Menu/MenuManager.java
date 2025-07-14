@@ -20,23 +20,51 @@ public class MenuManager {
             System.out.println("4. List Files");
             System.out.println("5. Search File");
             System.out.println("6. View Logs");
+            System.out.println("7. Move File/Directory");
+            System.out.println("8. Navigate Directory");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
             String choice = scanner.nextLine();
             switch (choice) {
-                case "1" -> fileTaskHandler.createFile("-d");
-                case "2" -> fileTaskHandler.deleteFile();
-                case "3" -> fileTaskHandler.renameFile();
-                case "4" -> fileTaskHandler.listFiles();
-                case "5" -> fileTaskHandler.searchFile();
-                case "6" -> logViewer.viewLogs();
-                case "0" -> {
+                case "1":
+                    String type = UserInput.getInput("Enter -f for file or -d for directory: ");
+                    fileTaskHandler.createFile(type);
+                    break;
+            
+                case "2":
+                    fileTaskHandler.deleteFile();
+                    break;
+            
+                case "3":
+                    fileTaskHandler.renameFile();
+                    break;
+            
+                case "4":
+                    fileTaskHandler.listFiles();
+                    break;
+            
+                case "5":
+                    fileTaskHandler.searchFile();
+                    break;
+
+                case "7":
+                    fileTaskHandler.moveFile();
+                    break;
+            
+                case "6":
+                    logViewer.viewLogs();
+                    break;
+        
+            
+                case "0":
                     System.out.println("Goodbye!");
                     return;
-                }
-                default -> System.out.println("Invalid choice. Try again.");
+            
+                default:
+                    System.out.println("Invalid choice. Try again.");
             }
+            
         }
     }
 }

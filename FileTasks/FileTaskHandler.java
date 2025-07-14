@@ -10,13 +10,13 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
     public void createFile(String type) {
         String name = UserInput.getInput("Enter -f for file or -d for directory name to create: ");
         Logger logger = new Logger();
-    
+
         if (type.equals("-d")) {
             try {
                 File dirname = new File(name);
                 if (dirname.mkdir()) {
                     System.out.println("Directory created: " + dirname.getAbsolutePath());
-                    logger.logAction("CREATE_DIRECTORY", name);  
+                    logger.logAction("CREATE_DIRECTORY", name);
                 } else {
                     System.out.println("Error: Directory already exists.");
                 }
@@ -28,7 +28,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
                 File file = new File(name);
                 if (file.createNewFile()) {
                     System.out.println("File created: " + file.getAbsolutePath());
-                    logger.logAction("CREATE_FILE", name);  
+                    logger.logAction("CREATE_FILE", name);
                 } else {
                     System.out.println("Error: File already exists.");
                 }
@@ -37,7 +37,32 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             }
         }
     }
-    
+
+    public void moveFile() {
+        String sourcePath = UserInput.getInput("Enter source file/directory name to move: ");
+        String destinationPath = UserInput.getInput("Enter destination path: ");
+        File source = new File(sourcePath);
+        File destination = new File(destinationPath, source.getName()); // Preserves original name
+
+        if (!source.exists()) {
+            System.out.println("Error: Source file/directory does not exist.");
+            return;
+        }
+
+        if (destination.exists()) {
+            System.out.println("Error: Destination already contains a file/directory with the same name.");
+            return;
+        }
+
+        boolean success = source.renameTo(destination);
+        if (success) {
+            System.out.println("File/Directory moved to: " + destination.getAbsolutePath());
+            Logger logger = new Logger();
+            logger.logAction("MOVE_FILE", "From: " + sourcePath + " To: " + destination.getAbsolutePath());
+        } else {
+            System.out.println("Error: Failed to move file/directory.");
+        }
+    }
 
     @Override
     public void deleteFile() {
@@ -57,7 +82,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
         File oldFile = new File(oldName);
         File newFile = new File(newName);
         if (oldFile.exists() && oldFile.renameTo(newFile)) {
-            System.out.println("File or Directory renamed to: "+ newFile.getName());
+            System.out.println("File or Directory renamed to: " + newFile.getName());
         } else {
             System.out.println("Rename failed.");
         }

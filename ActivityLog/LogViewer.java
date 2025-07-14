@@ -31,7 +31,7 @@ public class LogViewer {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Failed to fetch logs: " + e.getMessage());
+            System.out.println("Failed to fetch logs: " + e.getMessage());
         }
     }
 }
