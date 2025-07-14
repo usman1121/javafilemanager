@@ -7,4 +7,5 @@ public interface FileAction {
     void renameFile();
     void listFiles();
     void searchFile();
+    void navigatDiretory();
 }

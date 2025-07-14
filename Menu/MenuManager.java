@@ -20,6 +20,7 @@ public class MenuManager {
             System.out.println("4. List Files");
             System.out.println("5. Search File");
             System.out.println("6. View Logs");
+            System.out.println("7. Navigate Directory");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
@@ -31,6 +32,7 @@ public class MenuManager {
                 case "4" -> fileTaskHandler.listFiles();
                 case "5" -> fileTaskHandler.searchFile();
                 case "6" -> logViewer.viewLogs();
+                case "7" -> fileTaskHandler.navigatDiretory();
                 case "0" -> {
                     System.out.println("Goodbye!");
                     return;

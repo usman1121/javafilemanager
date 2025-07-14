@@ -41,12 +41,23 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
     @Override
     public void deleteFile() {
-        String name = UserInput.getInput("Enter file name to delete: ");
+        String name = UserInput.getInput("Enter file or Directory name to delete: ");
         File file = new File(name);
-        if (file.exists() && file.delete()) {
-            System.out.println("File deleted.");
-        } else {
-            System.out.println("File not found or couldn't be deleted.");
+        if(file.isFile()){
+            if (file.exists() && file.delete() ) {
+                System.out.println("File deleted.");
+            } else {
+                System.out.println("File not found or couldn't be deleted.");
+            }
+        }
+        if (file.isDirectory() && file.list().length == 0) {
+            if (file.exists() && file.delete() ) {
+                System.out.println("Directory deleted.");
+            } else {
+                System.out.println("Directory not found or couldn't be deleted.");
+            }
+        }else{
+            System.out.println("Directory is not empty");
         }
     }
 
@@ -99,5 +110,51 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
         if (!found) {
             System.out.println("File not found.");
         }
+    }
+    @Override
+    public void navigatDiretory(){
+        File currentPath = new File(".").getAbsoluteFile();
+        while (true) {
+            System.out.println("You are in " + currentPath.getAbsolutePath());
+
+            File[] files = currentPath.listFiles();
+            if(files == null || files.length == 0){
+                System.out.println("Directory is empty");
+            }
+            else{
+                System.out.println("--------------------------");
+                System.out.println("Total files " + files.length);
+                System.out.println("--------------------------");
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    String prefix = file.isDirectory() ? "d" : "-";
+                    System.out.println((i + 1) + ". " + prefix + " " + file.getName());
+                }
+                
+            }
+            System.out.println("0. Go Up to Parent Directory");
+            System.out.println("-1. Exit Navigation");
+
+            String choice = UserInput.getInput("Enter file number to navigate: ");
+            try {
+                int selected = Integer.parseInt(choice);
+                if (selected == -1) {
+                    break;
+                } else if (selected == 0) {
+                    File parent = currentPath.getParentFile();
+                    if (parent != null) {
+                        currentPath = parent;
+                    } else {
+                        System.out.println("Already at the root directory.");
+                    }
+                } else if (selected > 0 && selected <= files.length) {
+                    currentPath = files[selected - 1];
+                } else {
+                    System.out.println("Invalid option.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        } 
     }
 }
