@@ -8,4 +8,5 @@ public interface FileAction {
     void listFiles();
     void searchFile();
     void moveFile();
+    void copyFile();
 }

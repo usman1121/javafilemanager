@@ -18,10 +18,11 @@ public class MenuManager {
             System.out.println("2. Delete File");
             System.out.println("3. Rename File");
             System.out.println("4. List Files");
-            System.out.println("5. Search File");
-            System.out.println("6. View Logs");
-            System.out.println("7. Move File/Directory");
-            System.out.println("8. Navigate Directory");
+            System.out.println("5. Copy File");
+            System.out.println("6. Search File");
+            System.out.println("7. View Logs");
+            System.out.println("8. Move File/Directory");
+            System.out.println("9. Navigate Directory");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
@@ -43,16 +44,19 @@ public class MenuManager {
                 case "4":
                     fileTaskHandler.listFiles();
                     break;
-            
                 case "5":
+                    fileTaskHandler.copyFile();
+                    break;
+
+                case "6":
                     fileTaskHandler.searchFile();
                     break;
 
-                case "7":
+                case "8":
                     fileTaskHandler.moveFile();
                     break;
             
-                case "6":
+                case "7":
                     logViewer.viewLogs();
                     break;
         
