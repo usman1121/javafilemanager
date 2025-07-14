@@ -8,15 +8,16 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
     @Override
     public void createFile(String type) {
-        String name = UserInput.getInput("Enter -f for file or -d for directory name to create: ");
         Logger logger = new Logger();
     
         if (type.equals("-d")) {
+            String name = UserInput.getInput("Enter directory name: ");
             try {
                 File dirname = new File(name);
                 if (dirname.mkdir()) {
+                    System.out.println("----------------------------------");
                     System.out.println("Directory created: " + dirname.getAbsolutePath());
-                    logger.logAction("CREATE_DIRECTORY", name);  
+                    logger.logAction("CREATE DIRECTORY", name);  
                 } else {
                     System.out.println("Error: Directory already exists.");
                 }
@@ -24,9 +25,11 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
                 System.out.println("Could not create directory: " + e.getMessage());
             }
         } else {
+            String name = UserInput.getInput("Enter file name: ");
             try {
                 File file = new File(name);
                 if (file.createNewFile()) {
+                    System.out.println("----------------------------------");
                     System.out.println("File created: " + file.getAbsolutePath());
                     logger.logAction("CREATE_FILE", name);  
                 } else {
@@ -41,25 +44,40 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
     @Override
     public void deleteFile() {
-        String name = UserInput.getInput("Enter file or Directory name to delete: ");
+        String name = UserInput.getInput("Enter file or directory name to delete: ");
+        Logger logger = new Logger();
         File file = new File(name);
-        if(file.isFile()){
-            if (file.exists() && file.delete() ) {
+    
+        if (file.isFile()) {
+            if (file.exists() && file.delete()) {
                 System.out.println("File deleted.");
+                logger.logAction("File Deleted", name);
             } else {
                 System.out.println("File not found or couldn't be deleted.");
             }
-        }
-        if (file.isDirectory() && file.list().length == 0) {
-            if (file.exists() && file.delete() ) {
-                System.out.println("Directory deleted.");
+        } else if (file.isDirectory()) {
+            String[] contents = file.list();
+            if (contents != null && contents.length == 0) {
+                if (file.delete()) {
+                    System.out.println("Directory deleted.");
+                    logger.logAction("Directory Deleted", name);
+                } else {
+                    System.out.println("Directory couldn't be deleted.");
+                }
             } else {
-                System.out.println("Directory not found or couldn't be deleted.");
+                System.out.println("Directory is not empty. You can't delete it!");
+                String ch = UserInput.getInput("Enter 'n' to navigate or any other key to cancel: ");
+                if (ch.equalsIgnoreCase("n")) {
+                    navigatDiretory();
+                } else {
+                    System.out.println("Cancelled.");
+                }
             }
-        }else{
-            System.out.println("Directory is not empty");
+        } else {
+            System.out.println("File or directory not found.");
         }
     }
+    
 
     @Override
     public void renameFile() {
@@ -135,7 +153,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             System.out.println("0. Go Up to Parent Directory");
             System.out.println("-1. Exit Navigation");
 
-            String choice = UserInput.getInput("Enter file number to navigate: ");
+            String choice = UserInput.getInput("Enter file (-) or Directory (d) number to navigate: ");
             try {
                 int selected = Integer.parseInt(choice);
                 if (selected == -1) {
@@ -145,7 +163,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
                     if (parent != null) {
                         currentPath = parent;
                     } else {
-                        System.out.println("Already at the root directory.");
+                        System.out.println("Already at the parent directory.");
                     }
                 } else if (selected > 0 && selected <= files.length) {
                     currentPath = files[selected - 1];
