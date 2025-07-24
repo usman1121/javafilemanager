@@ -51,13 +51,16 @@ public class MenuManager {
                 case "6":
                     fileTaskHandler.searchFile();
                     break;
-
+                case "7":
+                    logViewer.viewLogs();
+                    break;
+                    
                 case "8":
                     fileTaskHandler.moveFile();
                     break;
             
-                case "7":
-                    logViewer.viewLogs();
+                case "9": 
+                    fileTaskHandler.navigatDiretory();
                     break;
         
             
