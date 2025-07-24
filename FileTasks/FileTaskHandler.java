@@ -1,13 +1,21 @@
 package FileTasks;
 
-import Menu.UserInput;
 import ActivityLog.Logger;
+import Menu.UserInput;
 import java.io.File;
 
 public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
+    private static final String PASSWORD = "omer"; 
+
     @Override
     public void createFile(String type) {
+        String password = UserInput.getInput("Enter password to create file/directory: ");
+        if (!password.equals(PASSWORD)) {
+            System.out.println("Incorrect password. File/directory creation failed.");
+            return;
+        }
+
         String name = UserInput.getInput("Enter -f for file or -d for directory name to create: ");
         Logger logger = new Logger();
 
@@ -37,81 +45,33 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             }
         }
     }
-    public void copyFile() {
-    String sourcePath = UserInput.getInput("Enter source file path to copy: ");
-    String destinationPath = UserInput.getInput("Enter destination directory: ");
-    Logger logger = new Logger();
-    
-    File source = new File(sourcePath);
-    File destinationDir = new File(destinationPath);
-    File destination = new File(destinationDir, source.getName()); // Preserve original file name
 
-    if (!source.exists()) {
-        System.out.println("Error: Source file does not exist.");
-        return;
-    }
-
-    if (!source.isFile()) {
-        System.out.println("Error: Only regular files can be copied.");
-        return;
-    }
-
-    if (!destinationDir.exists() || !destinationDir.isDirectory()) {
-        System.out.println("Error: Destination directory is invalid.");
-        return;
-    }
-
-    try (java.io.FileInputStream in = new java.io.FileInputStream(source);
-         java.io.FileOutputStream out = new java.io.FileOutputStream(destination)) {
-
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = in.read(buffer)) > 0) {
-            out.write(buffer, 0, length);
-        }
-
-        System.out.println("File copied to: " + destination.getAbsolutePath());
-        logger.logAction("COPY_FILE", "From: " + sourcePath + " To: " + destination.getAbsolutePath());
-
-    } catch (Exception e) {
-        System.out.println("Error: Failed to copy file. " + e.getMessage());
-    }
-}
-
-    public void moveFile() {
-        String sourcePath = UserInput.getInput("Enter source file/directory name to move: ");
-        String destinationPath = UserInput.getInput("Enter destination path: ");
-        File source = new File(sourcePath);
-        File destination = new File(destinationPath, source.getName()); // Preserves original name
-
-        if (!source.exists()) {
-            System.out.println("Error: Source file/directory does not exist.");
-            return;
-        }
-
-        if (destination.exists()) {
-            System.out.println("Error: Destination already contains a file/directory with the same name.");
-            return;
-        }
-
-        boolean success = source.renameTo(destination);
-        if (success) {
-            System.out.println("File/Directory moved to: " + destination.getAbsolutePath());
-            Logger logger = new Logger();
-            logger.logAction("MOVE_FILE", "From: " + sourcePath + " To: " + destination.getAbsolutePath());
-        } else {
-            System.out.println("Error: Failed to move file/directory.");
-        }
-    }
 
     @Override
     public void deleteFile() {
-        String name = UserInput.getInput("Enter file name to delete: ");
+        String password = UserInput.getInput("Enter password to delete file/directory: ");
+        if (!password.equals(PASSWORD)) {
+            System.out.println("Incorrect password. File/directory deletion failed.");
+            return;
+        }
+
+        String name = UserInput.getInput("Enter file or Directory name to delete: ");
         File file = new File(name);
-        if (file.exists() && file.delete()) {
-            System.out.println("File deleted.");
-        } else {
-            System.out.println("File not found or couldn't be deleted.");
+        if(file.isFile()){
+            if (file.exists() && file.delete() ) {
+                System.out.println("File deleted.");
+            } else {
+                System.out.println("File not found or couldn\'t be deleted.");
+            }
+        }
+        if (file.isDirectory() && file.list().length == 0) {
+            if (file.exists() && file.delete() ) {
+                System.out.println("Directory deleted.");
+            } else {
+                System.out.println("Directory not found or couldn\'t be deleted.");
+            }
+        }else{
+            System.out.println("Directory is not empty");
         }
     }
 
@@ -122,7 +82,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
         File oldFile = new File(oldName);
         File newFile = new File(newName);
         if (oldFile.exists() && oldFile.renameTo(newFile)) {
-            System.out.println("File or Directory renamed to: " + newFile.getName());
+            System.out.println("File or Directory renamed to: "+ newFile.getName());
         } else {
             System.out.println("Rename failed.");
         }
@@ -162,7 +122,63 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
         }
 
         if (!found) {
-            System.out.println("File not found.");
+            System.out.println("File not found.\n");
         }
+    }
+    @Override
+    public void navigatDiretory(){
+        File currentPath = new File(".").getAbsoluteFile();
+        while (true) {
+            System.out.println("You are in " + currentPath.getAbsolutePath());
+
+            File[] files = currentPath.listFiles();
+            if(files == null || files.length == 0){
+                System.out.println("Directory is empty");
+            }
+            else{
+                System.out.println("--------------------------");
+                System.out.println("Total files " + files.length);
+                System.out.println("--------------------------");
+                for (int i = 0; i < files.length; i++) {
+                    File file = files[i];
+                    String prefix = file.isDirectory() ? "d" : "-";
+                    System.out.println((i + 1) + ". " + prefix + " " + file.getName());
+                }
+
+            }
+            System.out.println("0. Go Up to Parent Directory");
+            System.out.println("-1. Exit Navigation");
+
+            String choice = UserInput.getInput("Enter file number to navigate: ");
+            try {
+                int selected = Integer.parseInt(choice);
+                if (selected == -1) {
+                    break;
+                } else if (selected == 0) {
+                    File parent = currentPath.getParentFile();
+                    if (parent != null) {
+                        currentPath = parent;
+                    } else {
+                        System.out.println("Already at the root directory.");
+                    }
+                } else if (selected > 0 && selected <= files.length) {
+                    currentPath = files[selected - 1];
+                } else {
+                    System.out.println("Invalid option.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+    }
+
+    @Override
+    public void moveFile() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void copyFile() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
