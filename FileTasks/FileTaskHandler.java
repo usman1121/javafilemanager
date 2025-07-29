@@ -1,12 +1,10 @@
 package FileTasks;
-
-import Menu.MenuManager;
 import Menu.UserInput;
+import ActivityLog.LogViewer;
 import ActivityLog.Logger;
 import java.io.File;
 
 public class FileTaskHandler extends CommonFileTasks implements FileAction {
-
     @Override
     public void createFile(String type, File currentPath) {
         String name = UserInput.getInput("Enter name: ");
@@ -30,7 +28,6 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             }
         }
     }
-
     @Override
     public boolean deleteFile(File filename) {
         Logger logger = new Logger();
@@ -74,8 +71,6 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
     @Override
     public void renameFile(File oldName, File newName) {
-        // String oldName = UserInput.getInput("Enter current file name: ");
-        // String newName = UserInput.getInput("Enter new file name: ");
         File oldFile = oldName;
         File newFile = newName;
         if (oldFile.exists() && oldFile.renameTo(newFile)) {
@@ -117,7 +112,6 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
                 }
             }
         }
-
         if (!found) {
             System.out.println("File not found.");
         }
@@ -134,7 +128,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             if (files == null || files.length == 0) {
                 System.out.println("Directory is empty.");
             } else {
-                System.out.println("Total Contents:" + files.length);
+                System.out.println("Total Files:" + files.length);
                 for (int i = 0; i < files.length; i++) {
                     File file = files[i];
                     String icon = file.isDirectory() ? "d" : "-";
@@ -146,8 +140,10 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             System.out.println("a. Create File/Directory");
             System.out.println("b. Delete File/Directory");
             System.out.println("c. Rename File/Directory");
-            System.out.println("0. Go Up");
-            System.out.println("-1. Exit Navigation");
+            System.out.println("d. Search File/Directory");
+            System.out.println("e. View Logs");
+            System.out.println("0. Back");
+            System.out.println("-1. Exit");
 
             String choice = UserInput.getInput("Enter choice: ");
 
@@ -181,7 +177,13 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
                     File newFile = new File(newName);
                     renameFile(oldFile, newFile);
                 }
-
+                else if (choice.equalsIgnoreCase("d")){
+                    searchFile();
+                }
+                else if (choice.equalsIgnoreCase("e")){
+                    var logger = new LogViewer();
+                    logger.viewLogs();
+                }
                 else {
                     int selected = Integer.parseInt(choice);
                     if (selected > 0 && selected <= files.length) {
