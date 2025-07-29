@@ -17,16 +17,16 @@ public class MenuManager {
         while (true) {
             System.out.println("\n==========Java File Manager ==========");
             System.out.println("Current Directory: " + currentPath.getAbsolutePath());
-            System.out.println("Files:");
             File[] files = currentPath.listFiles();
+            System.out.println("Files:" + files.length);
             if (files != null && files.length > 0) {
                 for (File file : files) {
-                    System.out.println(" - " + (file.isDirectory() ? "[DIR] " : "[FILE] ") + file.getName());
+                    System.out.println( (file.isDirectory() ? "d " : "- ") + file.getName());
                 }
             } else {
                 System.out.println(" (No files or directories)");
             }
-            System.out.println();
+            System.out.println("---------------------------------------------");
             System.out.println("1. Create File/Directory");
             System.out.println("2. Delete File/Directory");
             System.out.println("3. Rename File/Directory");

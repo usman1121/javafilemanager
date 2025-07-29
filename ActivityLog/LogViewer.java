@@ -8,7 +8,7 @@ import Database.DatabaseConnection;
 
 public class LogViewer {
     public void viewLogs() {
-        System.out.println("\n Log History:\n-------------------");
+        System.out.println("\n Log History:\n==========================================");
 
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -31,7 +31,7 @@ public class LogViewer {
             }
 
         } catch (Exception e) {
-            System.out.println("❌ Failed to fetch logs: " + e.getMessage());
+            System.out.println("Failed to fetch logs: " + e.getMessage());
         }
     }
 }
