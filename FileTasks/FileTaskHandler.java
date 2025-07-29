@@ -3,6 +3,11 @@ package FileTasks;
 import ActivityLog.Logger;
 import Menu.UserInput;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
@@ -125,6 +130,96 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
             System.out.println("File not found.\n");
         }
     }
+        @Override
+    public void importFile() {
+        String sourcePathString = UserInput.getInput("Enter the full path of the file or directory to import: ");
+        String destinationDirectoryString = UserInput.getInput("Enter the destination directory within the project: ");
+    
+        Path sourcePath = Paths.get(sourcePathString);
+        Path destinationDirectory = Paths.get(destinationDirectoryString);
+    
+        // Check if the source exists
+        if (!Files.exists(sourcePath)) {
+            System.out.println("Error: Source not found.");
+            return;
+        }
+    
+        // Check if the destination directory exists and is a directory
+        if (!Files.exists(destinationDirectory) || !Files.isDirectory(destinationDirectory)) {
+            System.out.println("Error: Destination directory not found or is not a directory.");
+            return;
+        }
+    
+        try {
+            if (Files.isDirectory(sourcePath)) {
+                // Copy directory recursively
+                Path targetDir = destinationDirectory.resolve(sourcePath.getFileName());
+                Files.walk(sourcePath).forEach(source -> {
+                    Path destination = targetDir.resolve(sourcePath.relativize(source));
+                    try {
+                        if (Files.isDirectory(source)) {
+                            if (!Files.exists(destination)) {
+                                Files.createDirectory(destination);
+                            }
+                        } else {
+                            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error copying: " + source + " -> " + destination + ": " + e.getMessage());
+                    }
+                });
+                System.out.println("Directory imported successfully to: " + targetDir.toAbsolutePath());
+                Logger logger = new Logger();
+                logger.logAction("IMPORT_DIRECTORY", sourcePathString + " to " + targetDir.toString());
+            } else {
+                // Copy single file
+                Path destinationPath = destinationDirectory.resolve(sourcePath.getFileName());
+                Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("File imported successfully to: " + destinationPath.toAbsolutePath());
+                Logger logger = new Logger();
+                logger.logAction("IMPORT_FILE", sourcePathString + " to " + destinationPath.toString());
+            }
+        } catch (IOException e) {
+            System.out.println("Error importing: " + e.getMessage());
+        }
+    }
+    
+    // @Override
+    //  public void importFile() {
+    //     String sourcePathString = UserInput.getInput("Enter the full path of the file to import: ");
+    //     String destinationDirectoryString = UserInput.getInput("Enter the destination directory within the project: ");
+
+    //     Path sourcePath = Paths.get(sourcePathString);
+    //     Path destinationDirectory = Paths.get(destinationDirectoryString);
+
+    //     // Check if the source file exists
+    //     if (!Files.exists(sourcePath)) {
+    //         System.out.println("Error: Source file not found.");
+    //         return;
+    //     }
+
+    //     // Check if the destination directory exists and is a directory
+    //     if (!Files.exists(destinationDirectory) || !Files.isDirectory(destinationDirectory)) {
+    //         System.out.println("Error: Destination directory not found or is not a directory.");
+    //         return;
+    //     }
+
+    //     try {
+    //         // Construct the destination path with the original file name
+    //         Path destinationPath = destinationDirectory.resolve(sourcePath.getFileName());
+
+    //         // Copy the file to the destination directory, replacing if it already exists
+    //         Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+    //         System.out.println("File imported successfully to: " + destinationPath.toAbsolutePath());
+    //          Logger logger = new Logger();
+    //          logger.logAction("IMPORT_FILE", sourcePathString + " to " + destinationPath.toString());
+
+    //     } catch (IOException e) {
+    //         System.out.println("Error importing file: " + e.getMessage());
+    //     }
+    // }
+
     @Override
     public void navigatDiretory(){
         File currentPath = new File(".").getAbsoluteFile();
