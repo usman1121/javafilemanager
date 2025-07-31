@@ -11,7 +11,7 @@ import java.nio.file.StandardCopyOption;
 
 public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
-    private static final String PASSWORD = "omer"; 
+    private static final String PASSWORD = "omer"; //the password is omer
 
     @Override
     public void createFile(String type) {

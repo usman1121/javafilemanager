@@ -1,10 +1,9 @@
 package ActivityLog;
 
+import Database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import Database.DatabaseConnection;
 
 public class LogViewer {
     public void viewLogs() {
