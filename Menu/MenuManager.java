@@ -1,14 +1,15 @@
 package Menu;
 
 import FileTasks.FileTaskHandler;
-import ActivityLog.LogViewer;
+import ActivityLog.CombinedLogViewer;
+
 
 import java.io.File;
 import java.util.Scanner;
 
 public class MenuManager {
     private FileTaskHandler fileTaskHandler = new FileTaskHandler();
-    private final LogViewer logViewer = new LogViewer();
+    private final CombinedLogViewer logViewer = new CombinedLogViewer();
     private final Scanner scanner = new Scanner(System.in);
 
     public void startMenu() {
@@ -67,7 +68,7 @@ public class MenuManager {
                     break;
                 }
                 case "6": {
-                    logViewer.viewLogs();
+                    logViewer.viewAllLogs();
                     break;
                 }
                 case "7": {

@@ -1,7 +1,9 @@
 package FileTasks;
 import Menu.UserInput;
-import ActivityLog.LogViewer;
+import ActivityLog.CombinedLogViewer;
 import ActivityLog.Logger;
+import ActivityLog.NavigationLogger;
+
 import java.io.File;
 
 public class FileTaskHandler extends CommonFileTasks implements FileAction {
@@ -119,87 +121,91 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
     
     @Override
     public void navigatDiretory() {
-        File currentPath = new File(".").getAbsoluteFile();
+    File currentPath = new File(".").getAbsoluteFile();
+    NavigationLogger navLogger = new NavigationLogger();
 
-        while (true) {
-            System.out.println("\n Current Directory: " + currentPath.getAbsolutePath());
+    while (true) {
+        System.out.println("\n📂 Current Directory: " + currentPath.getAbsolutePath());
 
-            File[] files = currentPath.listFiles();
-            if (files == null || files.length == 0) {
-                System.out.println("Directory is empty.");
-            } else {
-                System.out.println("Total Files:" + files.length);
-                for (int i = 0; i < files.length; i++) {
-                    File file = files[i];
-                    String icon = file.isDirectory() ? "d" : "-";
-                    System.out.println((i + 1) + ". " + icon + " " + file.getName());
-                }
-            }
-
-            System.out.println("\nOptions:");
-            System.out.println("a. Create File/Directory");
-            System.out.println("b. Delete File/Directory");
-            System.out.println("c. Rename File/Directory");
-            System.out.println("d. Search File/Directory");
-            System.out.println("e. View Logs");
-            System.out.println("0. Back");
-            System.out.println("-1. Exit");
-
-            String choice = UserInput.getInput("Enter choice: ");
-
-            try {
-                if (choice.equals("-1"))
-                    break;
-
-                else if (choice.equals("0")) {
-                    File parent = currentPath.getParentFile();
-                    if (parent != null)
-                        currentPath = parent;
-                    else
-                        System.out.println("At root. Can't go higher.");
-                }
-
-                else if (choice.equalsIgnoreCase("a")) {
-                    String type = UserInput.getInput("Enter -f for file or -d for directory: ");
-                    createFile(type, currentPath);
-                }
-
-                else if (choice.equalsIgnoreCase("b")) {
-                    String name = UserInput.getInput("Enter name to delete: ");
-                    deleteFile(currentPath.getAbsolutePath() + "/" + name);
-
-                }
-
-                else if (choice.equalsIgnoreCase("c")) {
-                    String oldName = UserInput.getInput("Enter current name: ");
-                    String newName = UserInput.getInput("Enter new name: ");
-                    File oldFile = new File(oldName);
-                    File newFile = new File(newName);
-                    renameFile(oldFile, newFile);
-                }
-                else if (choice.equalsIgnoreCase("d")){
-                    searchFile();
-                }
-                else if (choice.equalsIgnoreCase("e")){
-                    var logger = new LogViewer();
-                    logger.viewLogs();
-                }
-                else {
-                    int selected = Integer.parseInt(choice);
-                    if (selected > 0 && selected <= files.length) {
-                        File selectedFile = files[selected - 1];
-                        if (selectedFile.isDirectory()) {
-                            currentPath = selectedFile;
-                        } else {
-                            System.out.println(" That is a file, not a directory.");
-                        }
-                    }
-                }
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input.");
+        File[] files = currentPath.listFiles();
+        if (files == null || files.length == 0) {
+            System.out.println("Directory is empty.");
+        } else {
+            System.out.println("Total items: " + files.length);
+            for (int i = 0; i < files.length; i++) {
+                File file = files[i];
+                String icon = file.isDirectory() ? "d" : "-";
+                System.out.println((i + 1) + ". " + icon + " " + file.getName());
             }
         }
+
+        System.out.println("\nOptions:");
+        System.out.println("a. Create File/Directory");
+        System.out.println("b. Delete File/Directory");
+        System.out.println("c. Rename File/Directory");
+        System.out.println("d. Search File");
+        System.out.println("e. View Logs");
+        System.out.println("0. Go Up (Parent)");
+        System.out.println("-1. Exit Navigation");
+
+        String choice = UserInput.getInput("Enter choice: ");
+
+        try {
+            if (choice.equals("-1")) {
+                break;
+            } 
+            else if (choice.equals("0")) {
+                File parent = currentPath.getParentFile();
+                if (parent != null) {
+                    navLogger.logNavigation(currentPath.getAbsolutePath(), parent.getAbsolutePath());
+                    currentPath = parent;
+                } else {
+                    System.out.println("Already at root. Can't go higher.");
+                }
+            } 
+            else if (choice.equalsIgnoreCase("a")) {
+                String type = UserInput.getInput("Enter -f for file or -d for directory: ");
+                createFile(type, currentPath);
+            } 
+            else if (choice.equalsIgnoreCase("b")) {
+                String name = UserInput.getInput("Enter name to delete: ");
+                File target = new File(currentPath, name);
+                deleteFile(target); // ✅ pass File instead of String
+            } 
+            else if (choice.equalsIgnoreCase("c")) {
+                String oldName = UserInput.getInput("Enter current name: ");
+                String newName = UserInput.getInput("Enter new name: ");
+                File oldFile = new File(currentPath, oldName);
+                File newFile = new File(currentPath, newName);
+                renameFile(oldFile, newFile); // ✅ consistent File objects
+            } 
+            else if (choice.equalsIgnoreCase("d")) {
+                searchFile(); 
+            } 
+            else if (choice.equalsIgnoreCase("e")) {
+                CombinedLogViewer logViewer = new CombinedLogViewer();
+                logViewer.viewAllLogs();
+            } 
+            else {
+                int selected = Integer.parseInt(choice);
+                if (selected > 0 && selected <= files.length) {
+                    File selectedFile = files[selected - 1];
+                    if (selectedFile.isDirectory()) {
+                        navLogger.logNavigation(currentPath.getAbsolutePath(), selectedFile.getAbsolutePath());
+                        currentPath = selectedFile;
+                    } else {
+                        System.out.println("❌ That is a file, not a directory.");
+                    }
+                } else {
+                    System.out.println("Invalid selection.");
+                }
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("⚠ Invalid input.");
+        }
     }
+}
+
 
 }
