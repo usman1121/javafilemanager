@@ -9,6 +9,6 @@ public interface FileAction {
     void searchFile();
     void moveFile();
     void copyFile();
-    void navigatDiretory();
+    void navigateDirectory();
     void importFile();
 }
