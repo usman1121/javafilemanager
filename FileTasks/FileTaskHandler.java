@@ -221,7 +221,7 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
     // }
 
     @Override
-    public void navigatDiretory(){
+    public void navigateDirectory(){
         File currentPath = new File(".").getAbsoluteFile();
         while (true) {
             System.out.println("You are in " + currentPath.getAbsolutePath());
@@ -269,11 +269,70 @@ public class FileTaskHandler extends CommonFileTasks implements FileAction {
 
     @Override
     public void moveFile() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+        String sourcePath = UserInput.getInput("Enter source file/directory name to move: ");
+        String destinationPath = UserInput.getInput("Enter destination path: ");
+        File source = new File(sourcePath);
+        File destination = new File(destinationPath, source.getName()); // Preserves original name
 
+        if (!source.exists()) {
+            System.out.println("Error: Source file/directory does not exist.");
+            return;
+        }
+
+        if (destination.exists()) {
+            System.out.println("Error: Destination already contains a file/directory with the same name.");
+            return;
+        }
+
+        boolean success = source.renameTo(destination);
+        if (success) {
+            System.out.println("File/Directory moved to: " + destination.getAbsolutePath());
+            Logger logger = new Logger();
+            logger.logAction("MOVE_FILE", "From: " + sourcePath + " To: " + destination.getAbsolutePath());
+        } else {
+            System.out.println("Error: Failed to move file/directory.");
+        }
+    }
+   
     @Override
     public void copyFile() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    String sourcePath = UserInput.getInput("Enter source file path to copy: ");
+    String destinationPath = UserInput.getInput("Enter destination directory: ");
+    Logger logger = new Logger();
+    
+    File source = new File(sourcePath);
+    File destinationDir = new File(destinationPath);
+    File destination = new File(destinationDir, source.getName()); // Preserve original file name
+
+    if (!source.exists()) {
+        System.out.println("Error: Source file does not exist.");
+        return;
     }
+
+    if (!source.isFile()) {
+        System.out.println("Error: Only regular files can be copied.");
+        return;
+    }
+
+    if (!destinationDir.exists() || !destinationDir.isDirectory()) {
+        System.out.println("Error: Destination directory is invalid.");
+        return;
+    }
+
+    try (java.io.FileInputStream in = new java.io.FileInputStream(source);
+         java.io.FileOutputStream out = new java.io.FileOutputStream(destination)) {
+
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = in.read(buffer)) > 0) {
+            out.write(buffer, 0, length);
+        }
+
+        System.out.println("File copied to: " + destination.getAbsolutePath());
+        logger.logAction("COPY_FILE", "From: " + sourcePath + " To: " + destination.getAbsolutePath());
+
+    } catch (Exception e) {
+        System.out.println("Error: Failed to copy file. " + e.getMessage());
+    }
+}
 }
