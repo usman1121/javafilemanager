@@ -44,11 +44,12 @@ public class MenuManager {
                 case "5" -> fileTaskHandler.copyFile();
 
                 case "6" -> fileTaskHandler.searchFile();
+                
                 case "7" -> logViewer.viewLogs();
 
                 case "8" -> fileTaskHandler.moveFile();
             
-                case "9" -> fileTaskHandler.navigatDiretory();
+                case "9" -> fileTaskHandler.navigateDirectory();
                     
                 case "10" -> fileTaskHandler.importFile();
             
