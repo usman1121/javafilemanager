@@ -99,6 +99,16 @@ String password = "your_password";
 
 ### Compile the project  
 
+## First clone the project
+
+```
+https://github.com/usman1121/javafilemanager/tree/usman-branch
+```
+## Then cd /javafilemanager
+```
+cd javafilemanager
+
+```
 **Linux/MacOS**
 ```bash
 javac -cp ".:Database/postgresql-42.7.7.jar" MainApp/*.java ActivityLog/*.java Database/*.java FileTasks/*.java Menu/*.java
