@@ -1,32 +1,32 @@
 # 📂 Java File Manager
 
-A simple **command-line based File Manager** built with Java.  
-It allows users to **create, delete, rename, search, Files and Directories(Folders) and navigate directories** with activity logging to a PostgreSQL database.
+A simple command-line based File Manager built with Java.  
+It allows users to create, delete, rename, search, Files and Directories(Folders) and navigate directories with activity logging to a PostgreSQL database.
 
 ---
 
 ##  Features
 
-- 📁 **File & Directory Operations**
+- 📁 File & Directory Operations
   - Create files and directories
   - Delete files or empty directories
   - Rename files and directories
   - List all files in the current directory
   - Search files by name
   
-- 🔍 **Navigation**
+- 🔍 Navigation
   - Navigate through directories
   - Go back to parent folder
   - Exit navigation safely
   - Logs every navigation event
 
-- 📝 **Activity Logging**
+- 📝 Activity Logging
   - Stores file actions (create, delete, rename, search)
   - Stores navigation actions (moving between directories)
   - Logs are saved into PostgreSQL database
   - View all logs in one place
 
-- 🛠 **Error Handling**
+- 🛠 Error Handling
   - Prevents deleting non-empty directories
   - Prevents navigating into files
   - Handles invalid inputs
@@ -69,11 +69,15 @@ javafilemanager/
 
 ## 🗄 Database Setup
 
-The project uses **PostgreSQL** to log actions.
-
-1. Create database:
-```sql
+The project uses PostgreSQL to log actions.
+Create database:
+## create Database
+```
 CREATE DATABASE oopfinalproject;
+```
+create table
+```sql
+
 CREATE TABLE file_logs (
     id SERIAL PRIMARY KEY,
     action VARCHAR(50),
@@ -88,19 +92,13 @@ CREATE TABLE navigation_logs (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-
 # Database url
 ```
 String_url = "jdbc:postgresql://localhost:5432/oopfinalproject";
 String user = "postgres";
 String password = "your_password";
 ```
-## 🚀 Compile and Run
-
-### Compile the project  
-
 ## First clone the project
-
 ```
 https://github.com/usman1121/javafilemanager/tree/usman-branch
 ```
@@ -108,8 +106,12 @@ https://github.com/usman1121/javafilemanager/tree/usman-branch
 ```
 cd javafilemanager
 ```
-**Linux/MacOS**
-```bash
+## 🚀 Compile and Run
+
+### Compile the project  
+
+Linux/MacOS
+```
 javac -cp ".:Database/postgresql-42.7.7.jar" MainApp/*.java ActivityLog/*.java Database/*.java FileTasks/*.java Menu/*.java
 ```
 Windows (PowerShell / CMD)
@@ -126,7 +128,6 @@ Windows (PowerShell / CMD)
 ```
 java -cp ".;postgresql-42.7.7.jar" MainApp.FileManagerApp
 ```
-
 
 ## Output
 <pre>
@@ -146,4 +147,3 @@ Welcome to java File manager:
 0. Exit
 Choose an option:
 </pre>
-
