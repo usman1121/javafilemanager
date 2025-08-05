@@ -107,7 +107,6 @@ https://github.com/usman1121/javafilemanager/tree/usman-branch
 ## Then cd /javafilemanager
 ```
 cd javafilemanager
-
 ```
 **Linux/MacOS**
 ```bash
